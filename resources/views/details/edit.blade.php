@@ -13,7 +13,7 @@
 {{-- @dd(json_encode($detail)) --}}
 
 <x-app-layout title="{{ $title }}"
-    back="{{ route('boxes.index', ['shipment' => $shipment->slug, 'job' => $sjob->slug]) }}">
+    back="{{ route('boxes.index', ['shipment' => $shipment->slug, 'job' => $job->slug]) }}">
     <form
         action="{{ $detail
             ? route('detail.update', [

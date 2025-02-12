@@ -20,7 +20,7 @@ class StoreStockRequest extends FormRequest {
     public function rules(): array {
         return [
             'amount' => 'required',
-            'note' => 'required_unless:type,returned|nullable|file|image',
+            'note' => 'required|file|image',
             'type' => 'required'
         ];
     }
