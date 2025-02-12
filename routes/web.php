@@ -48,7 +48,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 Route::resource('marketing', MarketingController::class)->only(['index', 'create', 'store'])->middleware(['auth', 'admin']);
-Route::resource('convertionrate', ConvertionRateController::class)->only('update')->middleware(['auth', 'a']);
+Route::resource('convertionrate', ConvertionRateController::class)->only('update')->middleware(['auth', 'admin']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
