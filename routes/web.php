@@ -45,44 +45,23 @@ Route::get('/dashboard', function () {
         "stocks" => Stock::latest()->whereMonth('created_at', now())->whereYear('created_at', now())->get(),
         'details' => BoxDetail::all()
     ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::resource('marketing', MarketingController::class)->only(['index', 'create', 'store'])->middleware(['auth', 'admin']);
+Route::resource('convertionrate', ConvertionRateController::class)->only('update')->middleware(['auth', 'a']);
+
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/goods', function () {
-        $goods = Goods::filters(request(['search']));
-        // Jika pengguna adalah admin, tampilkan semua goods
-        if (Auth::user()->is_admin) {
-            $goods = $goods->get(); // Menampilkan semua goods
-        } else {
-            // Jika bukan admin, tampilkan goods yang terkait dengan pengguna
-            $goods = $goods->whereHas('supplier', function ($query) {
-                $query->where('user_id', Auth::user()->id); // Relasi ke supplier dengan user terkait
-            })->get();
-        }
-        return view('goods.index', [
-            "goods" => $goods,
-            "title" => "All Goods"
-        ]);
-    })->name('goods');
-
-    Route::resource('convertionrate', ConvertionRateController::class)->only('update');
-    Route::resource('marketing', MarketingController::class)->only(['index', 'create', 'store']);
-    Route::resource('shipments', ShipmentController::class)->except(['show']);
-    Route::resource('shipments.suppliers', SupplierController::class)->except(['destroy'])->names('suppliers');
-    Route::resource("shipments.jobs", JobController::class)->except(['show'])->names('jobs');
-    Route::resource("shipments.jobs.boxes", BoxController::class)->names('boxes');
-    Route::resource("shipments.jobs.boxes.detail", BoxDetailController::class)->names('detail');
-    Route::resource("shipments.supplier.goods", GoodsController::class)->names('goods');
-    Route::resource("shipments.supplier.goods.stocks", StockController::class)->only(['index', 'store'])->names('stocks');
     Route::post('/jobs/{job}', function (Job $job) {
         $job->update(['status' => 1]);
 
         return back()->with('success', "Job $job->no_job Done");
     })->name("job.done");
+
+    Route::resource('shipments', ShipmentController::class)->only(['index']);
 
     Route::post('download/{stock}', function (Stock $stock) {
         $filePath = public_path('storage/' . $stock->note); // Path file
@@ -112,6 +91,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // return view('export.box', ['job' => $job]);
         return Excel::download(new BoxExport($job), "Job $job->no_job.xlsx");
     })->name('export.box');
+});
+
+Route::middleware(['auth', 'restrictAccess'])->group(function () {
+    Route::resource('shipments', ShipmentController::class)->except(['index', 'show']);
+    Route::resource('shipments.suppliers', SupplierController::class)->except(['destroy'])->names('suppliers');
+    Route::resource("shipments.jobs", JobController::class)->except(['show'])->names('jobs');
+    Route::resource("shipments.jobs.boxes", BoxController::class)->names('boxes');
+    Route::resource("shipments.jobs.boxes.detail", BoxDetailController::class)->names('detail');
+    Route::resource("shipments.supplier.goods", GoodsController::class)->names('goods');
+    Route::resource("shipments.supplier.goods.stocks", StockController::class)->only(['index', 'store'])->names('stocks');
+
 });
 
 require __DIR__ . '/auth.php';

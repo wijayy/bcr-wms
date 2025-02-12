@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdmiMiddleware;
 use App\Http\Middleware\SameUserMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'restrictAccess' => SameUserMiddleware::class,
+            'admin' => AdmiMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
