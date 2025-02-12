@@ -56,7 +56,7 @@ class StockController extends Controller {
                 $message = "Goods $good->code Successfuly Added in warehouse";
             } elseif ($validated['type'] == 'returned') {
                 $validated['amount'] = min($validated['amount'], $good->stock);
-                Stock::create(['goods_id' => $good->id, 'type' => 'returned', 'stock' => $good->stock - $validated['amount'], 'amount' => $validated['amount'], 'desc' => "Goods leave the warehouse"]);
+                Stock::create(['goods_id' => $good->id, 'type' => 'returned', "note" => $validated['note'] , 'stock' => $good->stock - $validated['amount'], 'amount' => $validated['amount'], 'desc' => "Goods leave the warehouse"]);
                 $good->decrement('stock', $validated['amount']);
                 $message = "Goods $good->code Successfuly leave the warehouse";
             }
