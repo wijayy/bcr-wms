@@ -1,0 +1,18 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+@import "tailwindcss";
+
+@theme {
+    /* --color-*: initial; */
+    --color-mine-100: #eef9fd;
+    --color-mine-200: #00afef;
+    --color-mine-300: #354b9c;
+    --color-mine-400: #f58634;
+
+    --shadow-mine: 6px 6px 10px 4px rgba(0, 0, 0, 0.1);
+
+    --font-poppins: Poppins, sans-serif;
+    --font-comfortaa: Comfortaa, sans-serif;
+}
