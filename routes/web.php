@@ -61,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
         return back()->with('success', "Job $job->no_job Done");
     })->name("job.done");
 
-    Route::resource('shipments', ShipmentController::class)->only(['index']);
+    Route::resource('shipments', ShipmentController::class)->only(['index', 'create', 'store']);
 
     Route::post('download/{stock}', function (Stock $stock) {
         $filePath = public_path('storage/' . $stock->note); // Path file
@@ -94,7 +94,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'restrictAccess'])->group(function () {
-    Route::resource('shipments', ShipmentController::class)->except(['index', 'show']);
+    Route::resource('shipments', ShipmentController::class)->only(['destroy', 'edit', 'update']);
     Route::resource('shipments.suppliers', SupplierController::class)->except(['destroy'])->names('suppliers');
     Route::resource("shipments.jobs", JobController::class)->except(['show'])->names('jobs');
     Route::resource("shipments.jobs.boxes", BoxController::class)->names('boxes');
